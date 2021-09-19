@@ -1,0 +1,58 @@
+TITLE 'SORTING'
+.MODEL SMALL
+.STACK 100H
+.DATA
+A DB 5,2,1,3,4			
+.CODE 
+; SWAP STARTS HERE............................
+SWAP_ PROC
+PUSH AX
+MOV AL,[SI]
+XCHG AL,[DI]
+MOV [SI],AL
+POP AX
+RET
+SWAP_ ENDP
+
+SELECT_ PROC
+PUSH BX
+PUSH CX
+PUSH DX
+PUSH SI
+DEC BX		 ;  N=N-1, pass starts here
+JE END_SORT
+MOV DX,SI		 ;save array offset
+;.............for n-1 times DS
+SORT_LOOP:
+MOV SI,DX		;SI POINTS TO ARRAY
+MOV CX,BX		; number of comparison N-1
+MOV DI,SI		;DI POINTS TO LARGEST ELEMENT
+MOV AL,[DI]		; AI HAS LARGEST ELEMENTS
+FIND_BIG:
+INC SI;SI POINTS TO NEXT
+CMP [SI],AL
+JNG NEXT_
+MOV AL,[DI]
+NEXT_:
+LOOP FIND_BIG
+CALL SWAP_
+DEC BX		; SELECT SECOND LOOP
+JNE SORT_LOOP
+END_SORT:
+POP SI
+POP DX
+POP CX
+POP BX
+RET
+SELECT_ ENDP
+;..........main program starts here............................
+MAIN PROC 
+MOV AX, @DATA
+MOV DS,AX
+LEA SI,A
+MOV BX,5
+CALL SELECT_	; user defined function to select biggest number
+MOV AH,4CH
+INT 21H
+MAIN ENDP
+END MAIN
