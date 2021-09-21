@@ -1,19 +1,36 @@
 TITLE 'count the number of charectersin a line'
-.MODEL MEDIUM
+.MODEL SMALL
 .STACK 100H
 .DATA
 .CODE
-MAIN PROC			
+MAIN PROC
+    MOV BL,0			
 	MOV AH,1
-	;LOOP DX,0		 ;
-	XOR DX,DX
 	INT 21H
-	WHILE_:
-		CMP AL,0DH ;ASCII OF SPACE
-		JE EXIT
-		INC DX
-		INT 21H 			;some problem, where is the code to print DX ?
-		JMP WHILE_			; it doesn't print the number !
+	
+	LOOP:                     
+	    CMP AL,09H
+	    JE END
+	    INC BL
+	    INT 21H
+	    JMP LOOP
+	END:
+	;NEWLINE
+	 MOV AH,2
+	 MOV DL,10
+	 INT 21H
+	 MOV DL,13
+	 INT 21H
+	 
+	 ;PRINT
+	 MOV AH,2
+	 ADD BL,48
+	 MOV DL,BL
+	 INT 21H
+	
+	  
+		
+		
 EXIT:
 MOV AH,4CH
 INT 21H
